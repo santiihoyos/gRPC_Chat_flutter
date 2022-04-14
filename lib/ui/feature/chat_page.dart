@@ -5,8 +5,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:get/utils.dart';
 import 'package:grpc/grpc_web.dart';
-
-import '../../generated/protos/chat.pbgrpc.dart';
+import 'package:model/data/generated/protos/chat.pbgrpc.dart';
 
 const String serverHost = "localhost";
 const int serverPort = 9000;
@@ -107,17 +106,16 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<bool> _initChat() async {
     try {
-      final puerto = GetPlatform.isWeb ? 9000 : 8888;
+      final port = GetPlatform.isWeb ? 9000 : 8888;
       debugPrint("Conectando con: $serverHost:$serverPort");
       final channel = GrpcWebClientChannel.xhr(
-        Uri.http("$serverHost:$serverPort", "/"),
+        Uri.http("$serverHost:$port", "/"),
       );
 
       _chatClient = ChatClient(channel);
 
-      userId = Random(DateTime.now().microsecondsSinceEpoch)
-          .nextInt(99999999)
-          .toInt();
+      userId =
+          Random(DateTime.now().microsecondsSinceEpoch).nextInt(999999).toInt();
 
       debugPrint("ChatCliente created!");
       return Future.value(true);
@@ -144,7 +142,7 @@ class _ChatPageState extends State<ChatPage> {
         _messages = history.messages;
       });
     }).onError((error, stackTrace) {
-      print(error);
+      debugPrint(error.toString());
     });
     _chatClient.listen(handShakeMessage).listen((newMessage) {
       debugPrint("Nuevo mensaje!");

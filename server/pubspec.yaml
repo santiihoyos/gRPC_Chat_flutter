@@ -1,24 +1,19 @@
-name: server_shelf
-description: A simple command-line application.
+name: server
+description: Server services for Chat application.
 version: 1.0.0
 
-publish_to: 'none'
+publish_to: none
 
 environment:
-  sdk: '>=2.14.4 <3.0.0'
+  sdk: '>=2.14.4 <3.0.0' #Dart version
 
 dependencies:
-  shelf: ^1.2.0
-  shelf_router: ^1.1.2
+  grpc:
+  protobuf:
+  fixnum: ^1.0.0
   model:
     path: ../model
-  drift: ^1.0.1
-  dio: ^4.0.3
-
-
-# dependencies:
-#   path: ^1.8.0
 
 dev_dependencies:
-  lints: ^1.0.0
   build_runner: ^2.0.0
+  lints: ^1.0.0

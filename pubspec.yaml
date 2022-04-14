@@ -1,7 +1,21 @@
 name: grpc_chat_flutter
-description: Simple Chat by Flutter.
+description: >-
+    Simple Flutter Chat application for all supported platforms 
+    with gRPC and ProtocolBuffers includes server service.
+repository: https://github.com/santiihoyos/gRPC_Chat_flutter
+issue_tracker: https://github.com/santiihoyos/gRPC_Chat_flutter/issues
+documentation: https://santiihoyos.github.io/gRPC_Chat_flutter
+version: 1.0.0
 
-version: 1.0.0+1
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
+publish_to: none
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -9,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  model:
+    path: model
   flutter_localizations:
     sdk: flutter
   intl: ^0.17.0
