@@ -5,13 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/utils.dart';
 import 'package:grpc/grpc.dart';
 import 'package:grpc/grpc_connection_interface.dart';
-import 'package:grpc/grpc_web.dart';
-
 import '../../generated/chat.pbgrpc.dart';
 
 const String serverHost = "localhost";
 const String androidServerHost = "10.0.2.2";
-const int serverPort = 24957;
+const int serverPort = 8888;
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -36,7 +34,7 @@ class _ChatPageState extends State<ChatPage> {
     _initChat().then((initOk) {
       if (initOk) {
         debugPrint("Conectado OK!");
-        //_listenChat();
+        _listenChat();
       }
     });
   }
@@ -112,24 +110,14 @@ class _ChatPageState extends State<ChatPage> {
   Future<bool> _initChat() async {
     try {
       late ClientChannelBase channel;
-      if (GetPlatform.isWeb) {
-        debugPrint("Creando Channel XHR!");
-        channel = GrpcWebClientChannel.xhr(
-          Uri(
-            host: serverHost,
-            port: serverPort,
-          ),
-        );
-      } else {
-        debugPrint("Creando Channel nativo!");
-        channel = ClientChannel(
-          GetPlatform.isAndroid ? androidServerHost : serverHost,
-          port: serverPort,
-          options: const ChannelOptions(
-            credentials: ChannelCredentials.insecure(),
-          ),
-        );
-      }
+
+      channel = ClientChannel(
+        GetPlatform.isAndroid ? androidServerHost : serverHost,
+        port: serverPort,
+        options: const ChannelOptions(
+          credentials: ChannelCredentials.insecure(),
+        ),
+      );
 
       _chatClient = ChatClient(
         channel,
