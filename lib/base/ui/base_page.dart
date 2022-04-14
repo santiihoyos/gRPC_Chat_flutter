@@ -1,4 +1,4 @@
-import 'package:flutter_poc/base/ui/base_controller.dart';
+import 'package:grpc_chat_flutter/base/ui/base_controller.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class BasePage<C extends BaseController> extends StatefulWidget {

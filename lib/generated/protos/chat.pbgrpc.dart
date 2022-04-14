@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: chat.proto
+//  source: protos/chat.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
@@ -14,6 +14,10 @@ import 'chat.pb.dart' as $0;
 export 'chat.pb.dart';
 
 class ChatClient extends $grpc.Client {
+  static final _$getHistory = $grpc.ClientMethod<$0.HandShake, $0.History>(
+      '/com.santiihoyos.grpcchat.data.grpc.model.grpcchat.Chat/getHistory',
+      ($0.HandShake value) => value.writeToBuffer(),
+      ($core.List<$core.int> value) => $0.History.fromBuffer(value));
   static final _$write = $grpc.ClientMethod<$0.Message, $0.MessageResult>(
       '/com.santiihoyos.grpcchat.data.grpc.model.grpcchat.Chat/write',
       ($0.Message value) => value.writeToBuffer(),
@@ -27,6 +31,11 @@ class ChatClient extends $grpc.Client {
       {$grpc.CallOptions? options,
       $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
+
+  $grpc.ResponseFuture<$0.History> getHistory($0.HandShake request,
+      {$grpc.CallOptions? options}) {
+    return $createUnaryCall(_$getHistory, request, options: options);
+  }
 
   $grpc.ResponseFuture<$0.MessageResult> write($0.Message request,
       {$grpc.CallOptions? options}) {
@@ -45,6 +54,13 @@ abstract class ChatServiceBase extends $grpc.Service {
       'com.santiihoyos.grpcchat.data.grpc.model.grpcchat.Chat';
 
   ChatServiceBase() {
+    $addMethod($grpc.ServiceMethod<$0.HandShake, $0.History>(
+        'getHistory',
+        getHistory_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) => $0.HandShake.fromBuffer(value),
+        ($0.History value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.Message, $0.MessageResult>(
         'write',
         write_Pre,
@@ -61,6 +77,11 @@ abstract class ChatServiceBase extends $grpc.Service {
         ($0.Message value) => value.writeToBuffer()));
   }
 
+  $async.Future<$0.History> getHistory_Pre(
+      $grpc.ServiceCall call, $async.Future<$0.HandShake> request) async {
+    return getHistory(call, await request);
+  }
+
   $async.Future<$0.MessageResult> write_Pre(
       $grpc.ServiceCall call, $async.Future<$0.Message> request) async {
     return write(call, await request);
@@ -71,6 +92,8 @@ abstract class ChatServiceBase extends $grpc.Service {
     yield* listen(call, await request);
   }
 
+  $async.Future<$0.History> getHistory(
+      $grpc.ServiceCall call, $0.HandShake request);
   $async.Future<$0.MessageResult> write(
       $grpc.ServiceCall call, $0.Message request);
   $async.Stream<$0.Message> listen(

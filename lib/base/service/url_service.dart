@@ -1,4 +1,4 @@
-import 'package:flutter_poc/base/service/base_service.dart';
+import 'package:grpc_chat_flutter/base/service/base_service.dart';
 import 'package:flutter/material.dart';
 
 abstract class UrlService extends BaseService {

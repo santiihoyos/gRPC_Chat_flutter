@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: chat.proto
+//  source: protos/chat.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
@@ -191,5 +191,46 @@ class MessageResult extends $pb.GeneratedMessage {
   $core.bool hasWasOK() => $_has(0);
   @$pb.TagNumber(1)
   void clearWasOK() => clearField(1);
+}
+
+class History extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'History', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'com.santiihoyos.grpcchat.data.grpc.model.grpcchat'), createEmptyInstance: create)
+    ..pc<Message>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'messages', $pb.PbFieldType.PM, subBuilder: Message.create)
+    ..hasRequiredFields = false
+  ;
+
+  History._() : super();
+  factory History({
+    $core.Iterable<Message>? messages,
+  }) {
+    final _result = create();
+    if (messages != null) {
+      _result.messages.addAll(messages);
+    }
+    return _result;
+  }
+  factory History.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory History.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  History clone() => History()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  History copyWith(void Function(History) updates) => super.copyWith((message) => updates(message as History)) as History; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static History create() => History._();
+  History createEmptyInstance() => create();
+  static $pb.PbList<History> createRepeated() => $pb.PbList<History>();
+  @$core.pragma('dart2js:noInline')
+  static History getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<History>(create);
+  static History? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<Message> get messages => $_getList(0);
 }
 

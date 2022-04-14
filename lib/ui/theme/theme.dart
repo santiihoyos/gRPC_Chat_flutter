@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 ThemeData getThemeOf(final BuildContext context) => Theme.of(context);
@@ -22,24 +21,6 @@ class AppColors {
   static const textPrimaryColor = Color(0xFFFFFFFF);
 }
 
-class IngenioFonts {
-  ///Heading01 regular
-  static final headline1 = GoogleFonts.mulish(
-    textStyle: const TextStyle(
-      fontSize: 32,
-      color: AppColors.textPrimaryColor,
-    ),
-  );
-
-  ///Body01 regular
-  static final body1 = GoogleFonts.roboto(
-    textStyle: const TextStyle(
-      fontSize: 13,
-      color: AppColors.textPrimaryColor,
-    ),
-  );
-}
-
 ///Ingenio barber theme
 final darkTheme = ThemeData(
   scaffoldBackgroundColor: AppColors.backGroundColor,
@@ -48,9 +29,5 @@ final darkTheme = ThemeData(
     secondary: AppColors.accentColor,
     surface: AppColors.surfaceColor,
     background: Colors.white,
-  ),
-  textTheme: TextTheme(
-    headline1: IngenioFonts.headline1,
-    bodyText1: IngenioFonts.body1,
   ),
 );

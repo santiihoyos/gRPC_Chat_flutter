@@ -1,5 +1,5 @@
-name: flutter_poc
-description: A new Flutter project.
+name: grpc_chat_flutter
+description: Simple Chat by Flutter.
 
 version: 1.0.0+1
 
@@ -11,17 +11,16 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  google_fonts: ^2.1.0
   intl: ^0.17.0
   url_launcher: ^6.0.12
   cupertino_icons: ^1.0.2
   get: ^4.3.8
-  retrofit: '>=3.0.0 <4.0.0'
   logger: any
   lottie: ^1.2.1
   grpc:
   protobuf:
   fixnum: ^1.0.0
+  build_grpc_channel: ^0.5.0
 
 dev_dependencies:
   flutter_test:

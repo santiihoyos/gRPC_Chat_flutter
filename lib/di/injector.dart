@@ -1,7 +1,6 @@
-import 'package:flutter_poc/base/service/implementation/url_service_common.dart';
-import 'package:flutter_poc/base/service/url_service.dart';
+import 'package:grpc_chat_flutter/base/service/implementation/url_service_common.dart';
+import 'package:grpc_chat_flutter/base/service/url_service.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
 
 class Injector {
   ///Creates or find Instance of [Injector]

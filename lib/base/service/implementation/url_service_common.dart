@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter_poc/base/service/url_service.dart';
+import 'package:grpc_chat_flutter/base/service/url_service.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class UrlServiceCommonImpl extends UrlService {

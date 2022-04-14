@@ -1,15 +1,15 @@
 import 'dart:math';
 
+import 'package:build_grpc_channel/build_grpc_channel.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:get/utils.dart';
-import 'package:grpc/grpc.dart';
-import 'package:grpc/grpc_connection_interface.dart';
-import '../../generated/chat.pbgrpc.dart';
+import 'package:grpc/grpc_web.dart';
+
+import '../../generated/protos/chat.pbgrpc.dart';
 
 const String serverHost = "localhost";
-const String androidServerHost = "10.0.2.2";
-const int serverPort = 8888;
+const int serverPort = 9000;
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -19,11 +19,9 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final List<Message> _messages = [];
-
-  late ChatClient _chatClient;
   late int userId;
-
+  late ChatClient _chatClient;
+  List<Message> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -109,29 +107,22 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<bool> _initChat() async {
     try {
-      late ClientChannelBase channel;
-
-      channel = ClientChannel(
-        GetPlatform.isAndroid ? androidServerHost : serverHost,
-        port: serverPort,
-        options: const ChannelOptions(
-          credentials: ChannelCredentials.insecure(),
-        ),
+      final puerto = GetPlatform.isWeb ? 9000 : 8888;
+      debugPrint("Conectando con: $serverHost:$serverPort");
+      final channel = GrpcWebClientChannel.xhr(
+        Uri.http("$serverHost:$serverPort", "/"),
       );
 
-      _chatClient = ChatClient(
-        channel,
-        options: CallOptions(
-          timeout: const Duration(seconds: 30),
-        ),
-      );
+      _chatClient = ChatClient(channel);
 
       userId = Random(DateTime.now().microsecondsSinceEpoch)
           .nextInt(99999999)
           .toInt();
 
+      debugPrint("ChatCliente created!");
       return Future.value(true);
     } catch (ex) {
+      debugPrint("Error on ChatClient creation. $ex");
       return Future.value(false);
     }
   }
@@ -148,12 +139,14 @@ class _ChatPageState extends State<ChatPage> {
 
   void _listenChat() {
     final handShakeMessage = HandShake(userId: userId, nick: "Santi");
-    _chatClient
-        .listen(handShakeMessage,
-            options: CallOptions(
-              timeout: const Duration(hours: 1),
-            ))
-        .listen((newMessage) {
+    _chatClient.getHistory(handShakeMessage).then((history) {
+      setState(() {
+        _messages = history.messages;
+      });
+    }).onError((error, stackTrace) {
+      print(error);
+    });
+    _chatClient.listen(handShakeMessage).listen((newMessage) {
       debugPrint("Nuevo mensaje!");
       setState(
         () {
