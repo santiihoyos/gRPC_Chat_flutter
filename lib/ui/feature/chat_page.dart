@@ -1,14 +1,13 @@
 import 'dart:math';
-
-import 'package:build_grpc_channel/build_grpc_channel.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
-import 'package:grpc/grpc_web.dart';
+import 'package:grpc/grpc_or_grpcweb.dart';
+import 'package:grpc_chat_flutter/ui/theme/theme.dart';
 import 'package:model/data/generated/protos/chat.pbgrpc.dart';
 
-const String serverHost = "localhost";
-const int serverPort = 9000;
+const String gRpcServerHost = "vps-7fe29e2f.vps.ovh.net";
+const int gRpcWebServerPort = 9000;
+const int gRpcServerPort = 8888;
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -21,6 +20,8 @@ class _ChatPageState extends State<ChatPage> {
   late int userId;
   late ChatClient _chatClient;
   List<Message> _messages = [];
+
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -39,7 +40,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo[900],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           "Santander Chat",
@@ -49,17 +50,24 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Container(
         color: Colors.white,
+        margin: const EdgeInsets.only(
+          bottom: 10,
+          left: 10,
+          right: 10,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: ListView.builder(
+                reverse: true,
+                controller: _scrollController,
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
                   return Container(
                     margin: const EdgeInsets.all(16),
                     child: Text(
-                      _messages[index].message,
+                      _messages[(_messages.length - 1) - index].message,
                       style: const TextStyle(color: Colors.black),
                     ),
                   );
@@ -77,6 +85,10 @@ class _ChatPageState extends State<ChatPage> {
                       controller: _textEditingController,
                       cursorColor: Colors.black,
                       style: const TextStyle(color: Colors.black),
+                      onFieldSubmitted: (text) {
+                        _sendMeesage(text);
+                        _textEditingController.clear();
+                      },
                     ),
                   )),
                   Padding(
@@ -84,9 +96,9 @@ class _ChatPageState extends State<ChatPage> {
                     child: MaterialButton(
                         height: 60,
                         color: Colors.indigoAccent,
-                        child: const Text(
-                          "Send!",
-                          style: TextStyle(
+                        child: Text(
+                          getAppLocalizationsOf(context).send_button_text,
+                          style: const TextStyle(
                             color: Colors.white,
                           ),
                         ),
@@ -106,18 +118,22 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<bool> _initChat() async {
     try {
-      final port = GetPlatform.isWeb ? 9000 : 8888;
-      debugPrint("Conectando con: $serverHost:$serverPort");
-      final channel = GrpcWebClientChannel.xhr(
-        Uri.http("$serverHost:$port", "/"),
+      final channel = GrpcOrGrpcWebClientChannel.toSeparateEndpoints(
+        grpcHost: gRpcServerHost,
+        grpcPort: gRpcServerPort,
+        grpcWebHost: gRpcServerHost,
+        grpcWebPort: gRpcWebServerPort,
+        grpcWebTransportSecure: false,
+        grpcTransportSecure: false,
       );
 
       _chatClient = ChatClient(channel);
 
-      userId =
-          Random(DateTime.now().microsecondsSinceEpoch).nextInt(999999).toInt();
+      userId = Random(
+        DateTime.now().microsecondsSinceEpoch,
+      ).nextInt(999999).toInt();
 
-      debugPrint("ChatCliente created!");
+      debugPrint("ChatClient created!");
       return Future.value(true);
     } catch (ex) {
       debugPrint("Error on ChatClient creation. $ex");
@@ -141,16 +157,26 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         _messages = history.messages;
       });
+      _scrollToLast();
     }).onError((error, stackTrace) {
       debugPrint(error.toString());
     });
     _chatClient.listen(handShakeMessage).listen((newMessage) {
-      debugPrint("Nuevo mensaje!");
+      debugPrint("New incoming message!");
       setState(
         () {
           _messages.add(newMessage);
         },
       );
+      _scrollToLast();
     });
+  }
+
+  void _scrollToLast() {
+    _scrollController.animateTo(
+      0.0,
+      duration: const Duration(seconds: 1),
+      curve: Curves.bounceIn,
+    );
   }
 }
