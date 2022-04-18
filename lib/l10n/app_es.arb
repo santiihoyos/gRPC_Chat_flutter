@@ -1,3 +1,4 @@
 {
+    "chat_page_title" : "gRPC+ProtocolBuffers Chat",
     "send_button_text": "Enviar!"
 }

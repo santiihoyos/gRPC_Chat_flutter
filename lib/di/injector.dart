@@ -1,6 +1,8 @@
 import 'package:grpc_chat_flutter/base/service/implementation/url_service_common.dart';
 import 'package:grpc_chat_flutter/base/service/url_service.dart';
 import 'package:get/get.dart';
+import 'package:grpc_chat_flutter/ui/feature/chat_page/chat_page.dart';
+import 'package:grpc_chat_flutter/ui/feature/chat_page/chat_page_controller.dart';
 
 class Injector {
   ///Creates or find Instance of [Injector]
@@ -24,10 +26,12 @@ class Injector {
     return Get.find(tag: tag);
   }
 
+  ChatPage getChatPage() {
+    return ChatPage(controller: ChatPageController());
+  }
+
   /// resolves a instance of [UrlService]
   static UrlService getUrlService() {
     return Get.put(UrlServiceCommonImpl());
   }
-
-//endregion
 }
