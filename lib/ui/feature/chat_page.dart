@@ -23,6 +23,7 @@ class _ChatPageState extends State<ChatPage> {
 
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
+  final FocusNode _focusNodeTextField = FocusNode();
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _ChatPageState extends State<ChatPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          "Santander Chat",
+          "gRPC+ProtocolBuffers Chat",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.red[700],
@@ -64,11 +65,24 @@ class _ChatPageState extends State<ChatPage> {
                 controller: _scrollController,
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
+                  final m = _messages[(_messages.length - 1) - index];
                   return Container(
                     margin: const EdgeInsets.all(16),
-                    child: Text(
-                      _messages[(_messages.length - 1) - index].message,
-                      style: const TextStyle(color: Colors.black),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(m.userId.toString()),
+                        Text(
+                          m.message,
+                          textAlign: m.userId == userId
+                              ? TextAlign.end
+                              : TextAlign.start,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -81,13 +95,27 @@ class _ChatPageState extends State<ChatPage> {
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
+                    child: TextField(
+                      focusNode: _focusNodeTextField,
                       controller: _textEditingController,
                       cursorColor: Colors.black,
-                      style: const TextStyle(color: Colors.black),
-                      onFieldSubmitted: (text) {
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      onSubmitted: (text) {
                         _sendMeesage(text);
-                        _textEditingController.clear();
                       },
                     ),
                   )),
@@ -104,7 +132,6 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                         onPressed: () {
                           _sendMeesage(_textEditingController.text);
-                          _textEditingController.clear();
                         }),
                   ),
                 ],
@@ -133,7 +160,6 @@ class _ChatPageState extends State<ChatPage> {
         DateTime.now().microsecondsSinceEpoch,
       ).nextInt(999999).toInt();
 
-      debugPrint("ChatClient created!");
       return Future.value(true);
     } catch (ex) {
       debugPrint("Error on ChatClient creation. $ex");
@@ -142,13 +168,20 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _sendMeesage(String message) {
-    _chatClient.write(
+    _chatClient
+        .write(
       Message(
         userId: userId,
         message: message,
         dateTime: Int64(DateTime.now().millisecondsSinceEpoch),
       ),
-    );
+    )
+        .then((result) {
+      if (result.wasOK) {
+        _textEditingController.text = "";
+        _focusNodeTextField.requestFocus();
+      }
+    });
   }
 
   void _listenChat() {
