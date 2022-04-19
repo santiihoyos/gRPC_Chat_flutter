@@ -12,8 +12,8 @@ There are 2 native(Kotlin and Swift) alternatives to flutter Android and iOS bui
 ### Running dart microservice
 ```shell
 cd server
-dart pub get                        #use -upgrade- instead to run with latest dependencies version.  
-dart run bin/main.dart 0.0.0.0 8888 #Runs on localhost:8888
+dart pub get                          #use -upgrade- instead to run with latest dependencies version.  
+dart run bin/main.dart localhost 8888 #Runs on localhost:8888
 ```
 
 ### Run Flutter app

@@ -3,30 +3,49 @@ syntax = "proto3";
 option java_multiple_files = true;
 package com.santiihoyos.grpcchat.data.grpc.model.grpcchat;
 
-message HandShake {
-    int32 userId = 1;
-    string nick = 2;
+message Hello {
+    string nickName = 1;
+}
+
+message User {
+    int32 id = 1;
+    string nickName = 2;
 }
 
 message Message {
-    int32 userId = 1;
-    int64 dateTime = 2;
+    User user = 1;
+    int64 epochTime = 2;
     string message = 4;
 }
 
 message MessageResult {
-    bool wasOK = 1;
+    ACK ack = 1;
+}
+
+enum ACK {
+    NOT_SENT = 0;
+    SENT = 1;
 }
 
 message History {
     repeated Message messages = 1;
 }
 
+message WriteMessage {
+    int32 userId = 1;
+    string message = 2;
+}
+
 service Chat {
 
-    rpc getHistory(HandShake) returns (History) { }
+    /*
+    * Call to server to get userId
+    */
+    rpc hello(Hello) returns (User) {}
 
-    rpc write (Message) returns (MessageResult) {}
+    rpc getHistory(User) returns (History) { }
 
-    rpc listen (HandShake) returns (stream Message) {}
+    rpc write (WriteMessage) returns (MessageResult) {}
+
+    rpc listen (User) returns (stream Message) {}
 }
