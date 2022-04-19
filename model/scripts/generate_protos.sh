@@ -2,4 +2,4 @@
 
 # Generate protos
 echo "Generating protos..."
-protoc -I=. --dart_out=grpc:./lib/generated  "protos/chat.proto"
+protoc -I=. --dart_out=grpc:../lib/data/generated/protos "chat.proto"

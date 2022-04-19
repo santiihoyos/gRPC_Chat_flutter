@@ -22,6 +22,12 @@ class _ChatPageState extends State<ChatPage> {
   final FocusNode _focusNodeTextField = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    widget.controller.initChat("flutterUser");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,10 +76,10 @@ class _ChatPageState extends State<ChatPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(m.userId.toString()),
+              Text(m.user.id.toString()),
               Text(
                 m.message,
-                textAlign: m.userId == widget.controller.userId
+                textAlign: m.user.id == widget.controller.user.value.id
                     ? TextAlign.end
                     : TextAlign.start,
                 style: const TextStyle(
