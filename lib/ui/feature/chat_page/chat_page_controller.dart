@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/utils.dart';
 import 'package:grpc/grpc_or_grpcweb.dart';
 import 'package:model/data/generated/protos/chat.pbgrpc.dart';
 
-String _gRpcServerHost = GetPlatform.isAndroid ? "10.0.2.2" : "localhost";
+String _gRpcServerHost = "vps-7fe29e2f.vps.ovh.net";
 const int _gRpcWebServerPort = 9000;
 const int _gRpcServerPort = 8888;
 

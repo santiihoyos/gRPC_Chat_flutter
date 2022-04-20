@@ -20,11 +20,14 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
   final FocusNode _focusNodeTextField = FocusNode();
+  final TextEditingController _aliasController =
+      TextEditingController(text: "santi");
 
   @override
   void initState() {
     super.initState();
-    widget.controller.initChat("flutterUser");
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => showAliasDialog());
   }
 
   @override
@@ -52,8 +55,10 @@ class _ChatPageState extends State<ChatPage> {
               //reactive ListView from controller updates.
               child: Obx(() => _buildListView()),
             ),
-            SizedBox(
-              height: 80,
+            Container(
+              constraints: const BoxConstraints(
+                maxHeight: 200,
+              ),
               child: _textingSection(),
             )
           ],
@@ -71,26 +76,66 @@ class _ChatPageState extends State<ChatPage> {
       itemCount: messagesLenght,
       itemBuilder: (context, index) {
         final m = widget.controller.messages[(messagesLenght - 1) - index];
-        return Container(
-          margin: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(m.user.id.toString()),
-              Text(
-                m.message,
-                textAlign: m.user.id == widget.controller.user.value.id
-                    ? TextAlign.end
-                    : TextAlign.start,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
+        return _buildMessageItem(
+          userId: m.user.id,
+          userName: m.user.nickName,
+          message: m.message,
         );
       },
+    );
+  }
+
+  Widget _buildMessageItem({
+    required int userId,
+    required String userName,
+    required String message,
+  }) {
+    final chatterId = widget.controller.user.value.id;
+    return Container(
+      margin: const EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: chatterId == userId
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.7),
+              decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  borderRadius: const BorderRadius.all(Radius.circular(10))),
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  chatterId == userId
+                      ? const SizedBox(width: 0)
+                      : Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            userName,
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ),
+                  Text(
+                    message,
+                    textAlign: userId == widget.controller.user.value.id
+                        ? TextAlign.end
+                        : TextAlign.start,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -98,47 +143,95 @@ class _ChatPageState extends State<ChatPage> {
   Widget _textingSection() {
     return Row(
       children: [
-        Expanded(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            focusNode: _focusNodeTextField,
-            controller: _textEditingController,
-            cursorColor: Colors.black,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16,
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              focusNode: _focusNodeTextField,
+              controller: _textEditingController,
+              cursorColor: Colors.black,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              onSubmitted: (text) => _onSendMessage(message: text),
             ),
-            decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-            onSubmitted: (text) => _onSendMessage(message: text),
           ),
-        )),
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: MaterialButton(
               height: 60,
-              color: Colors.indigoAccent,
-              child: Text(
-                getAppLocalizationsOf(context).send_button_text,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+              minWidth: 60,
+              color: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
               ),
+              child: const Icon(Icons.send),
               onPressed: () {
-                _onSendMessage(message: _textEditingController.text);
+                if (_textEditingController.text.isNotEmpty) {
+                  _onSendMessage(message: _textEditingController.text);
+                } else {
+                  _focusNodeTextField.requestFocus();
+                }
               }),
         ),
       ],
+    );
+  }
+
+  Future<String?> showAliasDialog() async {
+    await showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        actionsPadding: const EdgeInsets.only(bottom: 10),
+        actions: [
+          TextButton(
+            child: Text(
+              getAppLocalizationsOf(context).ok,
+            ),
+            onPressed: () {
+              widget.controller.initChat(_aliasController.text);
+              Navigator.pop(context);
+              _focusNodeTextField.requestFocus();
+            },
+          )
+        ],
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              getAppLocalizationsOf(context).alias_dialog_title,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+              ),
+            ),
+            TextField(
+              style: TextStyle(
+                color: Colors.grey[900],
+              ),
+              focusNode: FocusNode()..requestFocus(),
+              controller: _aliasController,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -156,6 +249,7 @@ class _ChatPageState extends State<ChatPage> {
     if (wasOk) {
       _textEditingController.clear();
       _scrollToLast();
+      _focusNodeTextField.requestFocus();
     }
   }
 }

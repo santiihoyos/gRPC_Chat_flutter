@@ -1,4 +1,6 @@
 {
     "chat_page_title" : "gRPC+ProtocolBuffers Chat",
-    "send_button_text": "Enviar!"
+    "send_button_text": "Enviar",
+    "alias_dialog_title": "¿Cual es tu alias?",
+    "ok": "Aceptar"
 }
