@@ -26,6 +26,9 @@ class _ChatPageState extends State<ChatPage> {
   /// FocusNode to request focus on message send
   final FocusNode _focusNodeTextField = FocusNode();
 
+  /// FocusNode to request focus on alias
+  final FocusNode _focusNodeAlias = FocusNode();
+
   /// TextEditing controller to get alias name from Dialog.
   final TextEditingController _aliasController = TextEditingController();
 
@@ -212,9 +215,11 @@ class _ChatPageState extends State<ChatPage> {
               getAppLocalizationsOf(context).ok,
             ),
             onPressed: () {
-              widget.controller.initChat(_aliasController.text);
-              Navigator.pop(context);
-              _focusNodeTextField.requestFocus();
+              if (_aliasController.text.isNotEmpty) {
+                widget.controller.initChat(_aliasController.text);
+                Navigator.pop(context);
+                _focusNodeTextField.requestFocus();
+              }
             },
           )
         ],
@@ -229,10 +234,20 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
             TextField(
+              strutStyle: const StrutStyle(
+                fontSize: 15,
+              ),
+              onSubmitted: (txt) {
+                if (txt.isNotEmpty) {
+                  widget.controller.initChat(txt);
+                  Navigator.pop(context);
+                  _focusNodeTextField.requestFocus();
+                }
+              },
               style: TextStyle(
                 color: Colors.grey[900],
               ),
-              focusNode: FocusNode()..requestFocus(),
+              focusNode: _focusNodeAlias..requestFocus(),
               controller: _aliasController,
             ),
           ],

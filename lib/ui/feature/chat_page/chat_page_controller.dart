@@ -59,7 +59,12 @@ class ChatPageController extends GetxController {
 
   /// Listens new incoming messages from service.
   void _listenChat() async {
-    Stream<Message> incomingMessages = _chatClient.listen(user.value);
+    Stream<Message> incomingMessages = _chatClient.listen(
+      user.value,
+      options: CallOptions(
+        timeout: const Duration(hours: 3),
+      ),
+    );
     incomingMessages.listen((newMessage) => messages.add(newMessage));
   }
 }
