@@ -17,17 +17,23 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  /// ScrollController to manage scroll down on incoming new message.
   final ScrollController _scrollController = ScrollController();
+
+  /// TextEditingController to get message text from TextField.
   final TextEditingController _textEditingController = TextEditingController();
+
+  /// FocusNode to request focus on message send
   final FocusNode _focusNodeTextField = FocusNode();
-  final TextEditingController _aliasController =
-      TextEditingController(text: "santi");
+
+  /// TextEditing controller to get alias name from Dialog.
+  final TextEditingController _aliasController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 1))
-        .then((value) => showAliasDialog());
+        .then((value) => _showAliasDialog());
   }
 
   @override
@@ -193,7 +199,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Future<String?> showAliasDialog() async {
+  Future<void> _showAliasDialog() async {
     await showDialog<bool>(
       barrierDismissible: false,
       context: context,
@@ -244,6 +250,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  /// CAlled when user sends message from textfield
   Future<void> _onSendMessage({required String message}) async {
     final wasOk = await widget.controller.sendMeesage(message);
     if (wasOk) {
