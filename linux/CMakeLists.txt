@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
-set(BINARY_NAME "barber_book")
-set(APPLICATION_ID "com.barberbook.barber_book")
+set(BINARY_NAME "gRPC_Chat_Linux")
+set(APPLICATION_ID "com.santiihoyos.grpcchat")
 
 cmake_policy(SET CMP0063 NEW)
 
