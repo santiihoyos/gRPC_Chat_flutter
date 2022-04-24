@@ -5,8 +5,10 @@ import 'package:grpc/grpc.dart';
 import 'package:model/data/generated/protos/chat.pbgrpc.dart';
 import '../lib/services/grpc_chat_service.dart';
 
-const int defaultPort = 8888;
+const int defaultPort = 8890;
 const String defaultHost = "0.0.0.0";
+const String pathCert = "tls/server-cert.pem";
+const String pathKey = "tls/server-key.pem";
 
 /// Server entrypoint
 /// arguments at index 0 will be host (default: 0.0.0.0)
@@ -47,12 +49,16 @@ void initChatService({
   final server = Server(
     [chatService],
     const <Interceptor>[],
-    CodecRegistry(codecs: const [GzipCodec()]),
+    //CodecRegistry(codecs: const [GzipCodec()]),
   );
 
   await server.serve(
     address: host,
     port: port,
+    security: ServerTlsCredentials(
+      certificate: File(pathCert).readAsBytesSync(),
+      privateKey: File(pathKey).readAsBytesSync(),
+    ),
   );
 
   print('[RUNNING] Chat service on $host:${server.port}');
